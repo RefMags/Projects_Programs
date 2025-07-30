@@ -7,9 +7,53 @@ class Player
 end
 
 class Move
-  def initialize
-    # somthing we need to track
-    #  of the choice... a move object like `paper`,`rock` or `scissor`
+  attr_accessor :value
+  VALUES = ['rock', 'paper', 'scissor']
+
+  def initialize(value)
+    @value = value
+  end
+
+  def rock?
+    @value == 'rock'
+  end
+
+  def paper?
+    @value == 'paper'
+  end
+
+  def scissor?
+    @value == 'scissor'
+  end
+
+  def >(other_value)
+    if rock?
+      return true if other_value.scissor?
+      return false
+    elsif paper?
+      return true if other_value.rock?
+      return false
+    elsif scissor?
+      return true if other_value.paper?
+      return false
+    end
+  end
+
+  def <(other_value)
+    if rock?
+      return true if other_value.paper?
+      return false
+    elsif paper?
+      return true if other_value.scissor?
+      return false
+    elsif scissor?
+      return true if other_value.rock?
+      return false
+    end
+  end
+
+  def to_s
+    self.value
   end
 end
 
@@ -26,16 +70,15 @@ def compare(move1, move2)
 end
 
 class Human < Player
-
   def set_name
-    n = ""
+    input_name = ""
     loop do
       puts "What's your name?"
-      n = gets.chomp
-      break unless n.empty?
+      input_name = gets.chomp
+      break unless input_name.empty?
       puts "Sorry, must enter a value."
     end
-    self.name = n
+    self.name = input_name
   end
 
   def choose
@@ -44,26 +87,23 @@ class Human < Player
       # puts "Please choose #{OPTIONS.join(', ')}:"
       puts "Please choose rock,paper or scissor:"
       choice = gets.chomp
-      break if ['rock', 'paper', 'scissor'].include? choice
+      break if Move::VALUES.include? choice
       puts "Sorry, invalid choice!"
     end
-    self.move = choice
+    self.move = Move.new(choice)
   end
-
 end
 
 class Computer < Player
-
   def set_name
     self.name = ['R2D2', 'Hal', 'Chappie', 'Sonny', 'Number 5'].sample
   end
 
   def choose
-    self.move = ['rock', 'paper', 'scissor'].sample
+    self.move = Move.new(Move::VALUES.sample)
   end
 
 end
-
 
 # Game Orchestration Engine
 class RPSGame
@@ -86,20 +126,14 @@ class RPSGame
     puts "#{human.name} chose #{human.move}!"
     puts "#{computer.name} chose #{computer.move}!"
 
-    # the player object.move returns a string
-    case human.move
-    when "rock"
-      puts "It's a tie!" if computer.move == "rock"
-      puts "#{human.name} won!" if computer.move == "scissor"
-      puts "#{computer.name} won!" if computer.move == "paper"
-    when "paper"
-      puts "It's a tie!" if computer.move == "paper"
-      puts "#{human.name}  won!" if computer.move == "rock"
-      puts "#{computer.name} won!" if computer.move == "scissor"
-    when "scissor"
-      puts "It's a tie!" if computer.move == "scissor"
-      puts "#{human.name}  won!" if computer.move == "paper"
-      puts "#{computer.name} won!" if computer.move == "rock"
+    # Compare the `Move` objects of the human and computer to display the winner
+    #
+    if human.move > computer.move
+      puts "#{human.name} won!"
+    elsif human.move < computer.move
+      puts "#{computer.name} won!"
+    else
+      puts "It's a tie!"
     end
   end
 
