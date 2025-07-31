@@ -8,6 +8,7 @@ end
 
 class Move
   attr_accessor :value
+
   VALUES = ['rock', 'paper', 'scissor']
 
   def initialize(value)
@@ -53,20 +54,8 @@ class Move
   end
 
   def to_s
-    self.value
+    value
   end
-end
-
-def Rule
-  def initialize
-    # uncertain of what the state should be
-  end
-end
-
-
-# not sure where 'compare' goes yet
-def compare(move1, move2)
-
 end
 
 class Human < Player
@@ -84,7 +73,6 @@ class Human < Player
   def choose
     choice = nil
     loop do
-      # puts "Please choose #{OPTIONS.join(', ')}:"
       puts "Please choose rock,paper or scissor:"
       choice = gets.chomp
       break if Move::VALUES.include? choice
@@ -102,7 +90,6 @@ class Computer < Player
   def choose
     self.move = Move.new(Move::VALUES.sample)
   end
-
 end
 
 # Game Orchestration Engine
@@ -126,8 +113,8 @@ class RPSGame
     puts "#{human.name} chose #{human.move}!"
     puts "#{computer.name} chose #{computer.move}!"
 
-    # Compare the `Move` objects of the human and computer to display the winner
-    #
+    # Compare the `Move` objects of the human and computer class
+    # Use `>` method for comparison.
     if human.move > computer.move
       puts "#{human.name} won!"
     elsif human.move < computer.move
@@ -137,9 +124,9 @@ class RPSGame
     end
   end
 
-
   def play_again?
     answer = nil
+
     loop do
       puts "Would you like to play again? (y/n)"
       answer = gets.chomp
@@ -148,7 +135,7 @@ class RPSGame
     end
 
     return true if answer == 'y'
-    return false
+    return false if answer == 'n'
   end
 
   def play
