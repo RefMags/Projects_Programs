@@ -28,29 +28,15 @@ class Move
   end
 
   def >(other_value)
-    if rock?
-      return true if other_value.scissor?
-      return false
-    elsif paper?
-      return true if other_value.rock?
-      return false
-    elsif scissor?
-      return true if other_value.paper?
-      return false
-    end
+    (rock? && other_value.scissor?) ||
+      (paper? && other_value.rock?) ||
+      (scissor? && other_value.paper?)
   end
 
   def <(other_value)
-    if rock?
-      return true if other_value.paper?
-      return false
-    elsif paper?
-      return true if other_value.scissor?
-      return false
-    elsif scissor?
-      return true if other_value.rock?
-      return false
-    end
+    (rock? && other_value.paper?) ||
+      (paper? && other_value.scissor?) ||
+      (scissor? && other_value.rock?)
   end
 
   def to_s
@@ -109,10 +95,12 @@ class RPSGame
     puts "Thanks for playing Rock, Paper, Scissors!"
   end
 
-  def display_winner
+  def display_move
     puts "#{human.name} chose #{human.move}!"
     puts "#{computer.name} chose #{computer.move}!"
+  end
 
+  def display_winner
     # Compare the `Move` objects of the human and computer class
     # Use `>` method for comparison.
     if human.move > computer.move
@@ -144,6 +132,7 @@ class RPSGame
     loop do
       human.choose
       computer.choose
+      display_move
       display_winner
       break unless play_again?
     end
