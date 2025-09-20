@@ -65,6 +65,11 @@ class Human < Player
     end
     self.move = Move.new(choice)
   end
+
+  # each player starts with a record of zero
+  def score_record
+
+  end
 end
 
 class Computer < Player
@@ -74,6 +79,12 @@ class Computer < Player
 
   def choose
     self.move = Move.new(Move::VALUES.sample)
+  end
+
+  # computer score record
+  def score_record
+    # some code to record the score
+    # Only updated if a move has won against another player
   end
 end
 
@@ -126,7 +137,8 @@ class RPSGame
     loop do
       human.choose
       computer.choose
-      display_winner
+      display_winner # display winner and their score per round;
+      display_grand_winner # display grand prize if we reached 10points (each round gets you 2 points)
       break unless play_again?
     end
     display_goodbye_message
