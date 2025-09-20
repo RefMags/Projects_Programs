@@ -72,7 +72,7 @@ class Computer < Player
   end
 
   def choose
-    self.move = Move.new(Move::VALUES.sample)
+    self.move = Move.new(Move::VALUES.sample) # returns a move object of a `Move` class instead of a string
   end
 end
 
