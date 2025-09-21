@@ -39,7 +39,7 @@ class Player
 
   def initialize
     set_name
-    @score = 0
+    # @score = 0
   end
 end
 
@@ -67,10 +67,16 @@ class Human < Player
   end
 
   # each player starts with a record of zero
-  def score_record
-
-  end
+  # def score_record
+  #   choose
+  #   move > other_value.move
+  #   # loop do
+  #   #   puts "Score increase" if human.move > computer.move
+  #   #   break unless human.move < computer.move
+  #   # end
+  # end
 end
+
 
 class Computer < Player
   def set_name
@@ -82,11 +88,13 @@ class Computer < Player
   end
 
   # computer score record
-  def score_record
-    # some code to record the score
-    # Only updated if a move has won against another player
-  end
+  # def score_record
+  #   puts computer.score
+  #   # some code to record the score
+  #   # Only updated if a move has won against another player
+  # end
 end
+
 
 class RPSGame
   attr_accessor :human, :computer
@@ -109,6 +117,15 @@ class RPSGame
     puts "#{computer.name} chose #{computer.move}!"
   end
 
+  def display_score
+    if human.move > computer.move
+      human.score += 1
+    elsif human.move < computer.move
+      computer.score += 1
+    end
+  end
+
+
   def display_winner
     if human.move > computer.move
       puts "#{human.name} won!"
@@ -123,8 +140,8 @@ class RPSGame
     answer = nil
     loop do
       puts "Would you like to play again?(y/n)"
-      answer = gets.chomp
-      break if ['y', 'n'].include? answer.downcase
+      answer = gets.chomp.downcase
+      break if ['y', 'n'].include? answer
       puts "Sorry, must be y or n"
     end
 
@@ -137,8 +154,10 @@ class RPSGame
     loop do
       human.choose
       computer.choose
+      display_move
+      display_score
       display_winner # display winner and their score per round;
-      display_grand_winner # display grand prize if we reached 10points (each round gets you 2 points)
+      #display_grand_winner # display grand prize if we reached 10points (each round gets you 2 points)
       break unless play_again?
     end
     display_goodbye_message
