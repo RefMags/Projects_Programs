@@ -34,12 +34,37 @@ class Move
   end
 end
 
+class Score
+  attr_reader :value
+  THRESHOLD = 10
+
+  def initialize
+    @value = 0
+  end
+
+  def increase(points)
+    @value += points
+  end
+
+  def value
+    @value
+  end
+
+  def winning_score_reached?
+    @value >= THRESHOLD
+  end
+
+  def reset
+    @value = 0
+  end
+end
+
 class Player
   attr_accessor :move, :name , :score
 
   def initialize
     set_name
-    # @score = 0
+    @score = Score.new
   end
 end
 
@@ -65,16 +90,6 @@ class Human < Player
     end
     self.move = Move.new(choice)
   end
-
-  # each player starts with a record of zero
-  # def score_record
-  #   choose
-  #   move > other_value.move
-  #   # loop do
-  #   #   puts "Score increase" if human.move > computer.move
-  #   #   break unless human.move < computer.move
-  #   # end
-  # end
 end
 
 
@@ -86,13 +101,6 @@ class Computer < Player
   def choose
     self.move = Move.new(Move::VALUES.sample)
   end
-
-  # computer score record
-  # def score_record
-  #   puts computer.score
-  #   # some code to record the score
-  #   # Only updated if a move has won against another player
-  # end
 end
 
 
@@ -117,23 +125,40 @@ class RPSGame
     puts "#{computer.name} chose #{computer.move}!"
   end
 
-  def display_score
+  def update_score
+    # Use the winner from the `evaluated_move`
+    # increment the score of the winner (human or computer)
+    winner = evaluate_move
+    winner.score.increase(2) if winner
+    winner
+  end
+
+  def evaluate_move
+    # determine the winner based on the move comparison
     if human.move > computer.move
-      human.score += 1
+     human
     elsif human.move < computer.move
-      computer.score += 1
+      computer
+    else
+      nil
     end
   end
 
-
   def display_winner
-    if human.move > computer.move
-      puts "#{human.name} won!"
-    elsif human.move < computer.move
-      puts "#{computer.move} won!"
+    if update_score != nil
+      puts "The round winner is: #{update_score.name.capitalize}"
     else
-      puts "It's a tie!"
+      puts "Its a tie"
     end
+  end
+
+  def display_match_score
+     puts "The scores are; #{human.name}: #{human.score.value} and #{computer.name}: #{computer.score.value}"
+  end
+
+  def grand_winner_score?
+    winner = update_score
+    winner.score.winning_score_reached?
   end
 
   def play_again?
@@ -149,16 +174,27 @@ class RPSGame
     false if answer == 'n'
   end
 
-  def play
-    display_welcome_message
+  def play_match # round play
     loop do
       human.choose
       computer.choose
       display_move
-      display_score
-      display_winner # display winner and their score per round;
-      #display_grand_winner # display grand prize if we reached 10points (each round gets you 2 points)
+      update_score
+      display_winner
+      display_match_score
+      break unless grand_winner_score? # => to pick up here
+    end
+    #
+  end
+
+  def play
+    display_welcome_message
+    loop do
+      play_match
+      # diplay_grand_winner
       break unless play_again?
+      human.score.reset
+      computer.score.reset
     end
     display_goodbye_message
   end
