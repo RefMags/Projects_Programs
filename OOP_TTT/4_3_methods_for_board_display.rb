@@ -1,5 +1,3 @@
-require 'pry'
-
 class Board
   WINNING_LINES = [[1, 2, 3], [4, 5, 6], [7, 8, 9]] + # row
                   [[1, 4, 7], [2, 5, 8], [3, 6, 9]] + # column
@@ -10,6 +8,8 @@ class Board
     reset
   end
 
+  # rubocop: disable Metrics/AbcSize
+  # rubocop: disable Metrics/MethodLength
   def draw
     puts ""
     puts "     |     |"
@@ -25,17 +25,15 @@ class Board
     puts "     |     |"
     puts ""
   end
-
-  # def set_square_at(key, marker)
-  #   @squares[key].marker = marker
-  # end
+  # rubocop: enable Metrics/AbcSize
+  # rubocop: enable Metrics/MethodLength
 
   def []=(key, marker)
     @squares[key].marker = marker
   end
 
   def unmarked_keys
-    @squares.keys.select {|key|@squares[key].unmarked?}
+    @squares.keys.select { |key| @squares[key].unmarked? }
   end
 
   def full?
@@ -57,10 +55,11 @@ class Board
   end
 
   def reset
-    (1..9).each {|key| @squares[key] = Square.new}
+    (1..9).each { |key| @squares[key] = Square.new }
   end
 
   private
+
   def three_identical_markers?(squares)
     markers = squares.select(&:marked?).collect(&:marker)
     return false if markers.size != 3
@@ -90,14 +89,7 @@ class Square
   end
 end
 
-class Player
-  attr_reader :marker
-
-
-  def initialize(marker)
-    @marker = marker
-  end
-end
+Player = Struct.new('Player', :marker)
 
 # Game orchestration
 class TTTGame
@@ -117,24 +109,30 @@ class TTTGame
   def play
     clear
     display_welcome_message
+    main_game
+    display_goodbye_message
+  end
 
+  private
+
+  def main_game
     loop do
       display_board
-      loop do
-        current_player_moves
-        break if board.someone_won? || board.full?
-        clear_screen_and_display_board if human_turn?
-      end
+      player_move
       display_result
       break unless play_again?
       reset
       display_play_again_message
     end
-
-    display_goodbye_message
   end
 
-  private
+  def player_move
+    loop do
+      current_player_moves
+      break if board.someone_won? || board.full?
+      clear_screen_and_display_board if human_turn?
+    end
+  end
 
   def display_welcome_message
     puts "Welcome to Tic Tac Toe!"
@@ -225,7 +223,6 @@ class TTTGame
     answer == 'y'
   end
 end
-
 
 game = TTTGame.new
 game.play
