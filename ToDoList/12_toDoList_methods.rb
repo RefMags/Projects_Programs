@@ -177,12 +177,13 @@ todo3.done!
 # list.each { |todo| puts todo }
 
 # New methods
-list.find_by_title("Clean room")
-list.all_done
-list.all_not_done
+# list.find_by_title("Clean room")
+# list.all_done
+# list.all_not_done
 # puts list
-list.mark_done("Clean room")
-# puts list
-list.mark_all_done
-list.mark_all_undone
+result = list.mark_done("administrative work")
+# puts result
 puts list
+# list.mark_all_done
+# list.mark_all_undone
+# puts list
