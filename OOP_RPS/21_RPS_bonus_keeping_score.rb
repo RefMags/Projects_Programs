@@ -35,24 +35,24 @@ class Move
 end
 
 class Score
-  attr_reader :value
-  THRESHOLD = 10
+  attr_accessor :value
+  # THRESHOLD = 10
 
   def initialize
     @value = 0
   end
 
   def increase(points)
-    @value += points
+    self.value += points
   end
 
   def value
-    @value
+    value
   end
 
-  def winning_score_reached?
-    @value >= THRESHOLD
-  end
+  # def winning_score_reached?
+  #   @value >= THRESHOLD
+  # end
 
   def reset
     @value = 0
@@ -73,7 +73,7 @@ class Human < Player
     answer_name = nil
     loop do
       puts "What's your name?"
-      answer_name = gets.chomp
+      answer_name = gets.chomp.capitalize
       break unless answer_name.empty?
       puts "Sorry, must enter a name!"
     end
@@ -146,7 +146,7 @@ class RPSGame
 
   def display_winner
     if update_score != nil
-      puts "The round winner is: #{update_score.name.capitalize}"
+      puts "The round winner is: #{update_score.name}"
     else
       puts "Its a tie"
     end
@@ -156,9 +156,9 @@ class RPSGame
      puts "The scores are; #{human.name}: #{human.score.value} and #{computer.name}: #{computer.score.value}"
   end
 
-  def grand_winner_score?
-    winner = update_score
-    winner.score.winning_score_reached?
+  def grand_winner_score?(player)
+    player = update_score
+    player.score.value >= 10
   end
 
   def play_again?
@@ -179,10 +179,11 @@ class RPSGame
       human.choose
       computer.choose
       display_move
+      evaluate_move
       update_score
       display_winner
       display_match_score
-      break unless grand_winner_score? # => to pick up here
+      break unless grand_winner_score?(update_score.score) # => to pick up here
     end
     #
   end
